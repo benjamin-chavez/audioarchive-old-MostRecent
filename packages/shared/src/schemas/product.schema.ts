@@ -19,6 +19,7 @@ export const ProductSchema = z.object({
   key: z.string().optional(),
   label: z.string().optional(),
   description: z.string().optional(),
+  stripeProductId: z.string(),
   created_at: z.date(),
   updated_at: z.date(),
 });

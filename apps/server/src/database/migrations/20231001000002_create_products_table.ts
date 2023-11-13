@@ -54,11 +54,15 @@ exports.up = function (knex: Knex): Promise<void> {
     table.string('label'); // Optional column for a display label
     table.text('description'); // Optional column for a longer description. Using 'text' type for potentially longer content.
 
+    table.string('stripeProductId').notNullable();
+
     // Metadata Columns
     table.timestamps(true, true);
 
     // Composite Unique Constraint
     table.unique(['appUserId', 'name']);
+
+    table.index('stripeProductId');
   });
 };
 

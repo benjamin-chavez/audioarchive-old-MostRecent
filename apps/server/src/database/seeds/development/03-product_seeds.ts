@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+import StripeService from '../../../services/stripe.service';
 
 const TABLE_NAME = 'products';
 
@@ -8,8 +9,7 @@ export async function seed(knex: Knex): Promise<void> {
 
   const currentTimestamp = new Date();
 
-  // Inserts seed entries
-  await knex(TABLE_NAME).insert([
+  const productSeeds = [
     {
       appUserId: 2,
       accountId: 1,
@@ -19,7 +19,7 @@ export async function seed(knex: Knex): Promise<void> {
       bpm: 126,
       key: '',
       label: 'Seasonal Frequency',
-      description: '',
+      description: 'product description',
       price: 29.99,
       imgS3Key: 'amin-chavez-the-look-seed.jpg',
       digitalFileS3Key: 'ableton-audio-archive-demo-file-project-seed.zip',
@@ -35,7 +35,7 @@ export async function seed(knex: Knex): Promise<void> {
       bpm: 127,
       key: '',
       label: '',
-      description: '',
+      description: 'product description',
       price: 29.99,
       imgS3Key: 'amin-chavez-Booty-seed.png',
       digitalFileS3Key: 'ableton-audio-archive-demo-file-project-seed.zip',
@@ -52,7 +52,7 @@ export async function seed(knex: Knex): Promise<void> {
       bpm: 99,
       key: 'F Minor',
       label: 'Hardcore Energy',
-      description: '',
+      description: 'product description',
       price: 29.99,
       imgS3Key: 'keefe-dred-84-seed.webp',
       digitalFileS3Key: 'ableton-audio-archive-demo-file-project-seed.zip',
@@ -69,7 +69,7 @@ export async function seed(knex: Knex): Promise<void> {
       bpm: 145,
       key: 'F Major',
       label: 'Fantastic Voyage',
-      description: '',
+      description: 'product description',
       price: 29.99,
       imgS3Key: 'keefe-friction-seed.webp',
       digitalFileS3Key: 'ableton-audio-archive-demo-file-project-seed.zip',
@@ -85,7 +85,7 @@ export async function seed(knex: Knex): Promise<void> {
       bpm: 135,
       key: 'F Major',
       label: 'Vassnova',
-      description: '',
+      description: 'product description',
       price: 29.99,
       imgS3Key: 'Keefe-let-me-seed.webp',
       digitalFileS3Key: 'ableton-audio-archive-demo-file-project-seed.zip',
@@ -101,7 +101,7 @@ export async function seed(knex: Knex): Promise<void> {
       bpm: 117,
       key: 'F Major',
       label: 'Vassnova',
-      description: '',
+      description: 'product description',
       price: 29.99,
       imgS3Key: 'safety-or-numbers-cohesionep-seed.jpg',
       digitalFileS3Key: 'ableton-audio-archive-demo-file-project-seed.zip',
@@ -117,12 +117,23 @@ export async function seed(knex: Knex): Promise<void> {
       bpm: 120,
       key: 'F Major',
       label: '',
-      description: '',
+      description: 'product description',
       price: 29.99,
       imgS3Key: 'safety-or-numbers-cohesionep-seed.jpg',
       digitalFileS3Key: 'ableton-audio-archive-demo-file-project-seed.zip',
       created_at: currentTimestamp,
       updated_at: currentTimestamp,
     },
-  ]);
+  ];
+
+  // const { data: stripeProducts } = await StripeService.getProducts();
+
+  // productSeeds.forEach(async (seed) => {
+  //   const stripeProductId = await StripeService.createProduct(seed);
+  //   await knex(TABLE_NAME).insert({ ...seed, stripeProductId });
+  // });
+  for (const seed of productSeeds) {
+    const stripeProductId = await StripeService.createProduct(seed);
+    await knex(TABLE_NAME).insert({ ...seed, stripeProductId });
+  }
 }
