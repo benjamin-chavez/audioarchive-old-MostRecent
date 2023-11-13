@@ -70,13 +70,13 @@ async function handleStripeEvent(event: Event) {
       );
       // console.log(sessionWithLineItems);
       const lineItems = sessionWithLineItems.line_items?.data;
-      // console.log('HERE');
+      console.log('HERE');
       // @ts-ignore
       // console.log(sessionWithLineItems.metadata.productToAccountMapping);
       // const productToAccountMapping =
       //   sessionWithLineItems.metadata?.productToAccountMapping;
       // console.log(typeof lineItems);
-      // console.log(lineItems);
+      console.log(lineItems);
       // console.log('');
 
       const paymentIntent = await stripe.paymentIntents.retrieve(
@@ -87,14 +87,15 @@ async function handleStripeEvent(event: Event) {
       // console.log('productToAccountMapping', productToAccountMapping);
 
       lineItems?.forEach(async (item) => {
-        // console.log(item);
+        // @ts-ignore
+        const stripeAccountId = item.price?.product.metadata.stripe_account_id;
         // console.log(item.price?.unit_amount);
         // @ts-ignore
         // const productId = item.price?.product?.id;
         // console.log('productId', productId);
 
         // @ts-ignore
-        const stripeAccountId = productToAccountMapping[productId];
+        // const stripeAccountId = productToAccountMapping[productId];
 
         if (item.price?.unit_amount) {
           const transfer = await stripe.transfers.create({
@@ -103,12 +104,13 @@ async function handleStripeEvent(event: Event) {
             currency: 'usd',
             // @ts-ignore
             source_transaction: chargeId,
-            destination: 'acct_1O9hCGQoPQmuq40j',
+            destination: stripeAccountId,
           });
         }
       });
 
       break;
+
     case 'checkout.session.expired':
       console.log('CHECKOUT.SESSION.EXPIRED: ');
       break;
