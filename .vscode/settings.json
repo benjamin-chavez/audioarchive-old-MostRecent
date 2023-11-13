@@ -1,0 +1,29 @@
+{
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "workbench.colorTheme": "Gruvbox Light Soft",
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/dist": true,
+    "OLD": true,
+    "**/pnpm-lock.yaml": true,
+    "apps/client/.next": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": true
+  }
+}

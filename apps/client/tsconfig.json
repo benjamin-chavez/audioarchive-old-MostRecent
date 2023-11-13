@@ -1,0 +1,37 @@
+// apps/client/tsconfig.json
+{
+  "extends": "tsconfig/nextjs.json",
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/app/products/.todo/[id]-page-client-component.tsx",
+    "src/app/products/.todo/example1.tsx"
+  ],
+  "exclude": ["node_modules"]
+}

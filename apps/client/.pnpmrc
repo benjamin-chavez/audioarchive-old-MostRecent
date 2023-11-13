@@ -1,0 +1,4 @@
+# auth0-nextjs-interactive-audio-archive-sample-app/sample-01/.npmrc
+
+engine-strict=true
+package-manager=pnpm

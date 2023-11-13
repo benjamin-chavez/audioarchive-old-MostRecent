@@ -1,0 +1,15 @@
+{
+  "extends": "tsconfig/base.json",
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "typeRoots": ["./@types", "./node_modules/@types"],
+    "allowImportingTsExtensions": true,
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
+    "skipLibCheck": false
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}

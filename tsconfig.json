@@ -1,0 +1,7 @@
+{
+  "extends": "tsconfig/base.json",
+  "baseUrl": ".",
+  "paths": {
+    "@shared/*": ["packages/shared/src"]
+  }
+}
