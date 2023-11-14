@@ -3,7 +3,7 @@
 import { RequestHandler } from 'express';
 import asyncHandler from 'express-async-handler';
 import AppUserService from '../services/app-user.service';
-import ProductService from '../services/productService';
+import ProductService from '../services/product.service';
 import S3Service from '../services/s3.service';
 import axios from 'axios';
 

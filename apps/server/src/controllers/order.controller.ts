@@ -26,6 +26,7 @@ export const createCheckout: RequestHandler = asyncHandler(async (req, res) => {
     appUserId: appUser.id,
   });
   // console.log('cartItems', req.body);
+  // console.log('order', order);
 
   const lineItems = cartItems.map((item) => {
     return {

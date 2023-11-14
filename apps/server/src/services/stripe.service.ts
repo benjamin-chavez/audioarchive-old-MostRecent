@@ -18,6 +18,8 @@ class StripeService {
   static async createProduct(product: Partial<Product>) {
     // TODO: Error handling
 
+    // TODO: First check if product exists before creating it
+
     const stripeProduct = await stripe.products.create({
       // @ts-ignore
       name: product.name,

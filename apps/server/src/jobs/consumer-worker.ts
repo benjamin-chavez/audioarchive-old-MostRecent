@@ -63,42 +63,47 @@ async function handleStripeEvent(event: Event) {
       // TODO: Create New Cart.
 
       // TODO: Payout/transfer payment percentage to seller account.
-      // const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
-      //   event.data.object.id,
-      //   { expand: ['line_items.data.price.product'] }
-      // );
+      const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
+        event.data.object.id,
+        { expand: ['line_items.data.price.product'] }
+      );
 
-      // const lineItems = sessionWithLineItems.line_items?.data;
+      const lineItems = sessionWithLineItems.line_items?.data;
 
-      // const paymentIntent = await stripe.paymentIntents.retrieve(
-      //   checkoutSession.paymentIntent
-      // );
-      // const chargeId = paymentIntent.latest_charge;
+      const paymentIntent = await stripe.paymentIntents.retrieve(
+        checkoutSession.paymentIntent
+      );
+      const chargeId = paymentIntent.latest_charge;
 
-      // if (lineItems && paymentIntent.status === 'succeeded') {
-      //   // TODO: IT IS IMPORTANT THAT YOU ADD ROBUST ERROR HANDLING AND RETRY LOGIC HERE
-      //   //  YOU COULD POTENTIALLY LISTEN FOR THE payment.created EVENT OR WHATEVER THE CORRECT EVENT IS
-      //   for (const item of lineItems) {
-      //     const stripeAccountId =
-      //       // @ts-ignore
-      //       item.price?.product.metadata.stripe_account_id;
+      console.log(
+        'sessionWithLineItems',
+        JSON.stringify(sessionWithLineItems, null, 2)
+      );
 
-      //     if (item.price?.unit_amount && stripeAccountId) {
-      //       try {
-      //         const transfer = await stripe.transfers.create({
-      //           amount: item.price.unit_amount,
-      //           currency: 'usd',
-      //           // @ts-ignore
-      //           source_transaction: chargeId,
-      //           destination: stripeAccountId,
-      //         });
-      //       } catch (error) {
-      //         // TODO: Handle individual transfer error
-      //         console.error('Transfer creation failed:', error);
-      //       }
-      //     }
-      //   }
-      // }
+      if (lineItems && paymentIntent.status === 'succeeded') {
+        // TODO: IT IS IMPORTANT THAT YOU ADD ROBUST ERROR HANDLING AND RETRY LOGIC HERE
+        //  YOU COULD POTENTIALLY LISTEN FOR THE payment.created EVENT OR WHATEVER THE CORRECT EVENT IS
+        for (const item of lineItems) {
+          const stripeAccountId =
+            // @ts-ignore
+            item.price?.product.metadata.stripe_account_id;
+
+          if (item.price?.unit_amount && stripeAccountId) {
+            try {
+              const transfer = await stripe.transfers.create({
+                amount: item.price.unit_amount,
+                currency: 'usd',
+                // @ts-ignore
+                source_transaction: chargeId,
+                destination: stripeAccountId,
+              });
+            } catch (error) {
+              // TODO: Handle individual transfer error
+              console.error('Transfer creation failed:', error);
+            }
+          }
+        }
+      }
 
       break;
 

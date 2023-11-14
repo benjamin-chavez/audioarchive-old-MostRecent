@@ -52,7 +52,7 @@ exports.up = async function (knex: Knex): Promise<void> {
     t.string('label'); // Optional column for a display label
     t.text('description'); // Optional column for a longer description. Using 'text' type for potentially longer content.
 
-    t.string('stripeProductId').notNullable();
+    t.string('stripeProductId');
 
     // Metadata Columns
     t.timestamps(true, true);

@@ -31,7 +31,7 @@ export async function up(knex: Knex): Promise<void> {
       // .specificType('status', 'orderStatusType')
       .notNullable()
       .defaultTo('pending');
-    t.string('stripeCheckoutSessionId').notNullable();
+    t.string('stripeCheckoutSessionId');
     t.timestamps(true, true);
 
     t.index('id');

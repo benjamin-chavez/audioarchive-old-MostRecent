@@ -7,9 +7,10 @@ import OrderModel from '../models/order.model';
 class OrderService {
   static async create(orderData: Partial<Order>): Promise<Order> {
     if (
-      !orderData.appUserId ||
+      !orderData.appUserId
+      // ||
       // !orderData.stripePaymentIntentId ||
-      !orderData.stripeCheckoutSessionId
+      // !orderData.stripeCheckoutSessionId
     ) {
       throw new BadRequestError(
         'Stripe customer creation requires an app user ID and a Stripe customer ID'

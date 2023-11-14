@@ -9,7 +9,7 @@ import {
 } from '@shared/src/schemas';
 import { BadRequestError, NotFoundError } from '../middleware/customErrors';
 import AppUserModel from '../models/app-user.model';
-import ProductService from './productService';
+import ProductService from './product.service';
 import S3Service from './s3.service';
 import AppUserService from './app-user.service';
 import TransactionError from 'knex';

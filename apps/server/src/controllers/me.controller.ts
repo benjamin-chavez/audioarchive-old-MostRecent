@@ -5,7 +5,7 @@
 import { RequestHandler } from 'express';
 import asyncHandler from 'express-async-handler';
 import MeService from '../services/me.service';
-import ProductService from '../services/productService';
+import ProductService from '../services/product.service';
 import StripeAccountService from '../services/stripe-account.service';
 
 // Protected Routes for the authenticated user
