@@ -43,6 +43,8 @@ class OrderService {
     return order;
   }
 
+  // TODO: WHEN YOU ARE ADDING ERROR HANDLING/VALIDATION TO THESE UPDATE
+  // TODO: METHODS, CONSIDER CONSOLIDATING THEM INTO ONE updateBy() METHOD
   static async updateByCheckoutSessionId(
     stripeCheckoutSessionId: string,
     orderData: Partial<Order>
@@ -59,6 +61,26 @@ class OrderService {
       stripeCheckoutSessionId,
       orderData
     );
+
+    if (!order) {
+      throw new NotFoundError('Order not found or failed to update');
+    }
+
+    return order;
+  }
+
+  static async updateByOrderId(
+    orderId: number,
+    orderData: Partial<Order>
+  ): Promise<Order> {
+    // TODO: Add validation logic
+    // console.log('orderData', orderData);
+
+    if (!orderData) {
+      throw new BadRequestError('Invalid order data provided');
+    }
+
+    const order = await OrderModel.updateBy('id', orderId, orderData);
 
     if (!order) {
       throw new NotFoundError('Order not found or failed to update');

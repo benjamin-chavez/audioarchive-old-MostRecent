@@ -54,6 +54,7 @@ class CartModel {
         'updated_at', cart_items.updated_at,
         'product', json_build_object(
           'id', products.id,
+          'stripe_product_id', products.stripe_product_id,
           'stripe_account_id', accounts.stripe_account_id,
           'name', products.name,
           'genre', products.genre,

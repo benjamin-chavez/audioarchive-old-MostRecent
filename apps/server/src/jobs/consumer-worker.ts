@@ -63,51 +63,42 @@ async function handleStripeEvent(event: Event) {
       // TODO: Create New Cart.
 
       // TODO: Payout/transfer payment percentage to seller account.
-      const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
-        event.data.object.id,
-        // { expand: ['line_items'] }
-        { expand: ['line_items.data.price.product'] }
-      );
-      // console.log(sessionWithLineItems);
-      const lineItems = sessionWithLineItems.line_items?.data;
-      console.log('HERE');
-      // @ts-ignore
-      // console.log(sessionWithLineItems.metadata.productToAccountMapping);
-      // const productToAccountMapping =
-      //   sessionWithLineItems.metadata?.productToAccountMapping;
-      // console.log(typeof lineItems);
-      console.log(lineItems);
-      // console.log('');
+      // const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
+      //   event.data.object.id,
+      //   { expand: ['line_items.data.price.product'] }
+      // );
 
-      const paymentIntent = await stripe.paymentIntents.retrieve(
-        checkoutSession.paymentIntent
-      );
-      const chargeId = paymentIntent.latest_charge;
-      // console.log('chargeId', chargeId);
-      // console.log('productToAccountMapping', productToAccountMapping);
+      // const lineItems = sessionWithLineItems.line_items?.data;
 
-      lineItems?.forEach(async (item) => {
-        // @ts-ignore
-        const stripeAccountId = item.price?.product.metadata.stripe_account_id;
-        // console.log(item.price?.unit_amount);
-        // @ts-ignore
-        // const productId = item.price?.product?.id;
-        // console.log('productId', productId);
+      // const paymentIntent = await stripe.paymentIntents.retrieve(
+      //   checkoutSession.paymentIntent
+      // );
+      // const chargeId = paymentIntent.latest_charge;
 
-        // @ts-ignore
-        // const stripeAccountId = productToAccountMapping[productId];
+      // if (lineItems && paymentIntent.status === 'succeeded') {
+      //   // TODO: IT IS IMPORTANT THAT YOU ADD ROBUST ERROR HANDLING AND RETRY LOGIC HERE
+      //   //  YOU COULD POTENTIALLY LISTEN FOR THE payment.created EVENT OR WHATEVER THE CORRECT EVENT IS
+      //   for (const item of lineItems) {
+      //     const stripeAccountId =
+      //       // @ts-ignore
+      //       item.price?.product.metadata.stripe_account_id;
 
-        if (item.price?.unit_amount) {
-          const transfer = await stripe.transfers.create({
-            // amount: paymentIntent.amount,
-            amount: item.price.unit_amount,
-            currency: 'usd',
-            // @ts-ignore
-            source_transaction: chargeId,
-            destination: stripeAccountId,
-          });
-        }
-      });
+      //     if (item.price?.unit_amount && stripeAccountId) {
+      //       try {
+      //         const transfer = await stripe.transfers.create({
+      //           amount: item.price.unit_amount,
+      //           currency: 'usd',
+      //           // @ts-ignore
+      //           source_transaction: chargeId,
+      //           destination: stripeAccountId,
+      //         });
+      //       } catch (error) {
+      //         // TODO: Handle individual transfer error
+      //         console.error('Transfer creation failed:', error);
+      //       }
+      //     }
+      //   }
+      // }
 
       break;
 
@@ -124,7 +115,7 @@ async function handleStripeEvent(event: Event) {
       // TODO: Payout/transfer payment percentage to seller account.
       console.log(`PAYMENT INTENT SUCCEEDED`);
 
-      const paymentIntent = event.data.object;
+      // const paymentIntent = event.data.object;
 
       // const order = await OrderService.getBy(
       //   'stripePaymentIntentId',

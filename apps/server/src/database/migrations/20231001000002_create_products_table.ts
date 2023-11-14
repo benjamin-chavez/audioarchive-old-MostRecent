@@ -2,21 +2,23 @@ import { Knex } from 'knex';
 
 const TABLE_NAME = 'products';
 
-exports.up = function (knex: Knex): Promise<void> {
-  return knex.schema.createTable(TABLE_NAME, (table) => {
+exports.up = async function (knex: Knex): Promise<void> {
+  // await knex.schema.raw(
+  //   "CREATE TYPE productStatusType AS ENUM ('draft', 'published', 'archived')"
+  // );
+
+  return knex.schema.createTable(TABLE_NAME, (t) => {
     // Primary Key
-    table.increments('id').primary();
+    t.increments('id').primary();
 
     // Foreign Key
-    table
-      .integer('appUserId')
+    t.integer('appUserId')
       .unsigned()
       .references('appUsers.id')
       .notNullable()
       .onDelete('CASCADE');
 
-    table
-      .integer('accountId')
+    t.integer('accountId')
       .unsigned()
       .references('id')
       .inTable('accounts')
@@ -24,45 +26,41 @@ exports.up = function (knex: Knex): Promise<void> {
       .onDelete('CASCADE');
 
     // Essential Columns
-    table.string('name').notNullable();
-    table.specificType('genre', 'genre').notNullable();
-    table.specificType('software', 'software').notNullable();
-    table
-      .integer('bpm')
+    t.string('name').notNullable();
+    t.specificType('genre', 'genre').notNullable();
+    t.specificType('software', 'software').notNullable();
+    t.integer('bpm')
       .unsigned()
       .notNullable()
       .checkBetween([[20, 999]]);
-    table
-      .decimal(
-        'price'
-        // [precision, scale]
-      )
-      .checkPositive()
-      .unsigned()
-      .notNullable();
+    t.decimal('price').checkPositive().unsigned().notNullable(); // <= // [precision, scale]
 
-    table.string('imgS3Key', 512).defaultTo('default-album-artwork-seed.webp');
-    table.string('imgS3Url', 512);
+    // t.specificType('status', 'productStatusType')
+    //   .notNullable()
+    //   .defaultTo('draft');
 
-    table
-      .string('digitalFileS3Key', 512)
-      .defaultTo('ableton-audio-archive-demo-file-project-seed.zip');
-    table.string('digitalFileS3Url', 512);
+    t.string('imgS3Key', 512).defaultTo('default-album-artwork-seed.webp');
+    t.string('imgS3Url', 512);
+
+    t.string('digitalFileS3Key', 512).defaultTo(
+      'ableton-audio-archive-demo-file-project-seed.zip'
+    );
+    t.string('digitalFileS3Url', 512);
 
     // New Optional Columns
-    table.string('key'); // Optional column for a unique key or identifier
-    table.string('label'); // Optional column for a display label
-    table.text('description'); // Optional column for a longer description. Using 'text' type for potentially longer content.
+    t.string('key'); // Optional column for a unique key or identifier
+    t.string('label'); // Optional column for a display label
+    t.text('description'); // Optional column for a longer description. Using 'text' type for potentially longer content.
 
-    table.string('stripeProductId').notNullable();
+    t.string('stripeProductId').notNullable();
 
     // Metadata Columns
-    table.timestamps(true, true);
+    t.timestamps(true, true);
 
     // Composite Unique Constraint
-    table.unique(['appUserId', 'name']);
+    t.unique(['appUserId', 'name']);
 
-    table.index('stripeProductId');
+    t.index('stripeProductId');
   });
 };
 
@@ -70,7 +68,7 @@ exports.down = function (knex: Knex): Promise<void> {
   return knex.schema.dropTableIfExists(TABLE_NAME);
 };
 
-//     // table.enu('column', ['dubstep', 'house', 'pop', 'trap'], {
+//     // t.enu('column', ['dubstep', 'house', 'pop', 'trap'], {
 //   useNative: true,
 //   enumName: 'genre',
 // });

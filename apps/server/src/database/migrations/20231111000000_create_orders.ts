@@ -34,7 +34,7 @@ export async function up(knex: Knex): Promise<void> {
     t.string('stripeCheckoutSessionId').notNullable();
     t.timestamps(true, true);
 
-    // t.index('id');
+    t.index('id');
     t.index('stripePaymentIntentId');
     t.index('stripeCheckoutSessionId');
   });

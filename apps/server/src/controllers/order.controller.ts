@@ -22,27 +22,29 @@ export const createCheckout: RequestHandler = asyncHandler(async (req, res) => {
   const appUser = await MeService.getMe(authId);
   const cartItems = req.body;
   const customer = await CustomerService.getCustomerByAppUserId(appUser);
+  const order: Order = await OrderService.create({
+    appUserId: appUser.id,
+  });
   // console.log('cartItems', req.body);
-
-  // const productToAccountMapping = {};
-  // cartItems.forEach((item) => {
-  //   // console.log(item);
-  //   productToAccountMapping[item.product.id] = item.product.stripeAccountId;
-  // });
 
   const lineItems = cartItems.map((item) => {
     return {
       price_data: {
         currency: 'usd',
+        // product: product.stripeProductId,
         product_data: {
           name: item.product.name,
           // images: [item.image],
           // description: item.description,
           metadata: {
             id: item.product.id,
+            stripe_product_id: item.product.stripeProductId,
             stripe_account_id: item.product.stripeAccountId,
           },
         },
+        // recurring: {
+        //   interval: 'month',
+        // },
         unit_amount: item.product.price * 100,
       },
       quantity: 1,
@@ -52,25 +54,43 @@ export const createCheckout: RequestHandler = asyncHandler(async (req, res) => {
   const stripeSession = await stripe.checkout.sessions.create({
     customer: customer.stripeCustomerId,
     mode: 'payment',
+    // mode: 'subscription',
     // ui_mode: 'embedded',
     line_items: lineItems,
+
     automatic_tax: { enabled: true },
     customer_update: {
       address: 'auto',
       shipping: 'auto',
     },
-    // metadata: {
-    //   //    orderId:
-    //   productToAccountMapping: JSON.stringify(productToAccountMapping),
+    // subscription_data: {
+    //   transfer_data: {
+    //     destination: 'acct_1OBstLQpzpp1vjpb',
+    //     amount_percent: 95,
+    //   },
     // },
+    metadata: {
+      app_order_id: order.id,
+      // productToAccountMapping: JSON.stringify(productToAccountMapping),
+    },
+    payment_intent_data: {
+      metadata: {
+        app_order_id: order.id,
+      },
+    },
+    // reciept_email: '' <= TODO: Look into this
 
     // http://localhost:3000/dashboard/accounts?session_id=cs_test_b1G45KX8hYXJidwcYiMlRlTDps8T5S8RAATT2eu5YywwZ4vwSlZv8RlUoG
     success_url: `${process.env.CLIENT_URL}/dashboard/accounts?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.CLIENT_URL}/cart`,
   });
 
-  const newOrder: Order = await OrderService.create({
-    appUserId: appUser.id,
+  // const newOrder: Order = await OrderService.create({
+  //   appUserId: appUser.id,
+  //   stripeCheckoutSessionId: stripeSession.id,
+  // });
+
+  const newOrder: Order = await OrderService.updateByOrderId(order.id, {
     stripeCheckoutSessionId: stripeSession.id,
   });
 

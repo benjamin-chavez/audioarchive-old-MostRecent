@@ -40,6 +40,7 @@ address_full_match
  - Think about this problem for SEO:Update Internal Links: When a URL changes, update all internal links pointing to the old URL to point to the new URL directly.
  - Look at step 4 of the [Fulfill orders with Checkout](https://stripe.com/docs/payments/checkout/fulfill-orders) docs. Determine if you will be handling any of those payment methods and add delayed notification payment handling if so.
  - Go live and website checkilists: https://stripe.com/docs/development/checklist
+ - Link at adding idempotencKeys to stripe requests: [idempotent_requests](https://stripe.com/docs/api/idempotent_requests)
 
 
 <!--  -->
