@@ -93,7 +93,7 @@ class CartModel {
     cartId: number,
     cartData: Partial<Cart>
   ): Promise<Cart | null> {
-    return knex(this.tableName).where({ cartId }).update(cartData);
+    return knex(this.tableName).where({ id: cartId }).update(cartData);
   }
 
   static async updateActiveCartByAppUserId(

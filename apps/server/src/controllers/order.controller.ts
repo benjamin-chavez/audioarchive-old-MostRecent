@@ -21,9 +21,10 @@ export const createCheckout: RequestHandler = asyncHandler(async (req, res) => {
   const order: Order = await OrderService.create({
     appUserId: appUser.id,
   });
+  const cartId = cartItems[0].cartId;
 
   const lineItems = cartItems.map((item) => {
-    console.log(item.product.imgS3Url);
+    // console.log(item.product.imgS3Url);
     return {
       price_data: {
         currency: 'usd',
@@ -59,6 +60,7 @@ export const createCheckout: RequestHandler = asyncHandler(async (req, res) => {
     },
     metadata: {
       app_order_id: order.id,
+      cartId: cartId,
     },
     payment_intent_data: {
       metadata: {

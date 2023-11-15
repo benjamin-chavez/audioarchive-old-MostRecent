@@ -6,6 +6,7 @@ import knex from '../config/database';
 import Stripe from 'stripe';
 import OrderService from '../services/order.service';
 import { generateRandomBytes } from '../lib/utils';
+import CartService from '../services/cart.service';
 
 // @ts-ignore
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -57,16 +58,18 @@ async function handleStripeEvent(event: Event) {
 
       // TODO: Sending the customer/seller receipt emails <= i think this is handled by stripe?
 
-      // TODO: Create New Cart.
-      
-
       // TODO: Payout/transfer payment percentage to seller account.
       const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
         event.data.object.id,
         { expand: ['line_items.data.price.product'] } // <= review this. might not need all of that data
       );
+      // @ts-ignore
+      const { cartId } = sessionWithLineItems.metadata;
+
+      await CartService.updateCartById(cartId, { status: 'purchased' });
 
       const lineItems = sessionWithLineItems.line_items?.data;
+
       const paymentIntent = await stripe.paymentIntents.retrieve(
         checkoutSession.paymentIntent
       );
