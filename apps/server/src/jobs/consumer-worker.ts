@@ -1,12 +1,11 @@
 // apps/server/src/routes/consumer-worker.ts
 require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` });
 import { Event } from '@shared/src';
-import { connect, Channel, Connection } from 'amqplib';
-import knex from '../config/database';
+import { Channel, Connection, connect } from 'amqplib';
 import Stripe from 'stripe';
-import OrderService from '../services/order.service';
-import { generateRandomBytes } from '../lib/utils';
+import knex from '../config/database';
 import CartService from '../services/cart.service';
+import OrderService from '../services/order.service';
 
 // @ts-ignore
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);

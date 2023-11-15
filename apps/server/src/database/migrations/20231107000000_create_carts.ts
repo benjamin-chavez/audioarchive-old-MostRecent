@@ -4,7 +4,7 @@ const TABLE_NAME = 'carts';
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.raw(
-    "CREATE TYPE cartStatusType AS ENUM ('active', 'purchased', 'archived', 'abandoned')"
+    "CREATE TYPE cart_status_type AS ENUM ('active', 'purchased', 'archived', 'abandoned')"
   );
 
   // return knex.schema.createTable(TABLE_NAME, (table) => {
@@ -13,15 +13,15 @@ export async function up(knex: Knex): Promise<void> {
 
     // Foreign Key
     table
-      .integer('appUserId')
+      .integer('app_user_id')
       .unsigned()
       .references('id')
-      .inTable('appUsers')
+      .inTable('app_users')
       .notNullable()
       .onDelete('CASCADE');
 
     table
-      .specificType('status', 'cartStatusType')
+      .specificType('status', 'cart_status_type')
       .notNullable()
       .defaultTo('active');
 
