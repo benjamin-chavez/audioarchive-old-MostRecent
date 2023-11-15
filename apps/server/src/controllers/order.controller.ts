@@ -12,10 +12,6 @@ import { Order } from '@shared/src';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // export const createOrder: RequestHandler = asyncHandler(async (req, res) => {
-//   // @ts-ignore
-//   const authId = req.auth.sub;
-// });
-
 export const createCheckout: RequestHandler = asyncHandler(async (req, res) => {
   // @ts-ignore
   const authId = req.auth.sub;
@@ -25,17 +21,18 @@ export const createCheckout: RequestHandler = asyncHandler(async (req, res) => {
   const order: Order = await OrderService.create({
     appUserId: appUser.id,
   });
-  // console.log('cartItems', req.body);
-  // console.log('order', order);
 
   const lineItems = cartItems.map((item) => {
+    console.log(item.product.imgS3Url);
     return {
       price_data: {
         currency: 'usd',
         // product: product.stripeProductId,
         product_data: {
           name: item.product.name,
-          // images: [item.image],
+          // images: [
+          //   'https://res.cloudinary.com/dyy8g76av/image/upload/v1588621017/Aminchavez.com-thumbnail_iyqr0c.png',
+          // ],
           // description: item.description,
           metadata: {
             id: item.product.id,
@@ -43,9 +40,6 @@ export const createCheckout: RequestHandler = asyncHandler(async (req, res) => {
             stripe_account_id: item.product.stripeAccountId,
           },
         },
-        // recurring: {
-        //   interval: 'month',
-        // },
         unit_amount: item.product.price * 100,
       },
       quantity: 1,
@@ -55,28 +49,21 @@ export const createCheckout: RequestHandler = asyncHandler(async (req, res) => {
   const stripeSession = await stripe.checkout.sessions.create({
     customer: customer.stripeCustomerId,
     mode: 'payment',
-    // mode: 'subscription',
     // ui_mode: 'embedded',
     line_items: lineItems,
 
-    automatic_tax: { enabled: true },
+    automatic_tax: { enabled: true }, // TODO: REVIEW TAXES
     customer_update: {
       address: 'auto',
       shipping: 'auto',
     },
-    // subscription_data: {
-    //   transfer_data: {
-    //     destination: 'acct_1OBstLQpzpp1vjpb',
-    //     amount_percent: 95,
-    //   },
-    // },
     metadata: {
       app_order_id: order.id,
-      // productToAccountMapping: JSON.stringify(productToAccountMapping),
     },
     payment_intent_data: {
       metadata: {
         app_order_id: order.id,
+        // application_fee_amount: 1000,
       },
     },
     // reciept_email: '' <= TODO: Look into this
@@ -86,18 +73,12 @@ export const createCheckout: RequestHandler = asyncHandler(async (req, res) => {
     cancel_url: `${process.env.CLIENT_URL}/cart`,
   });
 
-  // const newOrder: Order = await OrderService.create({
-  //   appUserId: appUser.id,
-  //   stripeCheckoutSessionId: stripeSession.id,
-  // });
-
   const newOrder: Order = await OrderService.updateByOrderId(order.id, {
     stripeCheckoutSessionId: stripeSession.id,
   });
 
-  // console.log('newOrder', newOrder);
   if (!newOrder) {
-    // "render :new"???
+    // TODO: "render :new"???
     console.log('render :new???');
   }
   console.log('NEW ORDER CREATED IN ORDER CONTROLLER!!!');

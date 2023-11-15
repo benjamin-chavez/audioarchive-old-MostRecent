@@ -1,13 +1,13 @@
 // apps/backend/src/app.ts
 
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import express, { Express } from 'express';
 import flash from 'express-flash';
+import helmet from 'helmet';
 import morgan from 'morgan';
 import errorHandler from './middleware/errorMiddleware'; // notFoundHandler, // generalErrorHandler,
 import routes from './routes/index';
-import cors from 'cors';
-import helmet from 'helmet';
 
 const app: Express = express();
 

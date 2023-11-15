@@ -63,3 +63,12 @@ address_full_match
 2023-11-12 00:43:48   --> checkout.session.expired [evt_1OBXOZJiRcfe15ltlQcj4q9f]
 2023-11-12 00:43:48  <--  [200] POST http://localhost:5000/api/webhook/stripe [evt_1OBXOZJiRcfe15ltlQcj4q9f]
 # audioarchive
+
+
+console.log(
+        'sessionWithLineItems',
+        JSON.stringify(sessionWithLineItems, null, 2)
+      );
+
+
+https://stripe-camo.global.ssl.fastly.net/fa04a84f8f505671f7dac761055f2edf3860b2a84aa15cbceb93cb54915dfcdf/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f6479793867373661762f696d6167652f75706c6f61642f76313538383632313031372f416d696e63686176657a2e636f6d2d7468756d626e61696c5f6979717230632e706e67

@@ -4,7 +4,7 @@
       "mode": "auto"
     }
   ],
-  "workbench.colorTheme": "Gruvbox Light Soft",
+  "workbench.colorTheme": "Gruvbox Dark Hard",
   "search.exclude": {
     "**/node_modules": true,
     "**/.git": true,

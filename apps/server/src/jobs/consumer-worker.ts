@@ -41,6 +41,7 @@ async function handleStripeEvent(event: Event) {
 
       // TODO: SEE IF YOU CAN SEND A MESSAGE TO THE FRONTEND TO INVALIDATE THE ACCOUNTS CACHE
       break;
+
     case 'customer.created':
       console.log('CUSTOMER CREATED EVENT PROCESSING');
       break;
@@ -49,58 +50,51 @@ async function handleStripeEvent(event: Event) {
       console.log('CHECKOUT.SESSION.COMPLETED');
       const checkoutSession = event.data.object;
 
-      // TODO: If a bug shows up here, you might need to re-GET the status from the stripe api
-
       await OrderService.updateByCheckoutSessionId(checkoutSession.id, {
-        // @ts-ignore
         stripePaymentIntentId: checkoutSession.paymentIntent,
         paymentStatus: checkoutSession.paymentStatus,
       });
 
-      // fulfillOrder(lineItems);
-      // TODO: Sending the customer a receipt email <= i think this is handled by stripe?
+      // TODO: Sending the customer/seller receipt emails <= i think this is handled by stripe?
 
       // TODO: Create New Cart.
+      
 
       // TODO: Payout/transfer payment percentage to seller account.
       const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
         event.data.object.id,
-        { expand: ['line_items.data.price.product'] }
+        { expand: ['line_items.data.price.product'] } // <= review this. might not need all of that data
       );
 
       const lineItems = sessionWithLineItems.line_items?.data;
-
       const paymentIntent = await stripe.paymentIntents.retrieve(
         checkoutSession.paymentIntent
       );
       const chargeId = paymentIntent.latest_charge;
 
-      console.log(
-        'sessionWithLineItems',
-        JSON.stringify(sessionWithLineItems, null, 2)
-      );
+      if (!lineItems || paymentIntent.status !== 'succeeded') {
+        break;
+      }
 
-      if (lineItems && paymentIntent.status === 'succeeded') {
-        // TODO: IT IS IMPORTANT THAT YOU ADD ROBUST ERROR HANDLING AND RETRY LOGIC HERE
-        //  YOU COULD POTENTIALLY LISTEN FOR THE payment.created EVENT OR WHATEVER THE CORRECT EVENT IS
-        for (const item of lineItems) {
-          const stripeAccountId =
-            // @ts-ignore
-            item.price?.product.metadata.stripe_account_id;
+      // TODO: IT IS IMPORTANT THAT YOU ADD ROBUST ERROR HANDLING AND RETRY LOGIC HERE
+      //  YOU COULD POTENTIALLY LISTEN FOR THE payment.created EVENT OR WHATEVER THE CORRECT EVENT IS
+      for (const item of lineItems) {
+        const stripeAccountId =
+          // @ts-ignore
+          item.price?.product.metadata.stripe_account_id;
 
-          if (item.price?.unit_amount && stripeAccountId) {
-            try {
-              const transfer = await stripe.transfers.create({
-                amount: item.price.unit_amount,
-                currency: 'usd',
-                // @ts-ignore
-                source_transaction: chargeId,
-                destination: stripeAccountId,
-              });
-            } catch (error) {
-              // TODO: Handle individual transfer error
-              console.error('Transfer creation failed:', error);
-            }
+        if (item.price?.unit_amount && stripeAccountId) {
+          try {
+            const transfer = await stripe.transfers.create({
+              amount: item.price.unit_amount - 1000,
+              currency: 'usd',
+              // @ts-ignore
+              source_transaction: chargeId,
+              destination: stripeAccountId,
+            });
+          } catch (error) {
+            // TODO: Handle individual transfer error
+            console.error('Transfer creation failed:', error);
           }
         }
       }
@@ -119,33 +113,6 @@ async function handleStripeEvent(event: Event) {
     case 'payment_intent.succeeded': {
       // TODO: Payout/transfer payment percentage to seller account.
       console.log(`PAYMENT INTENT SUCCEEDED`);
-
-      // const paymentIntent = event.data.object;
-
-      // const order = await OrderService.getBy(
-      //   'stripePaymentIntentId',
-      //   paymentIntent.id
-      // );
-
-      // console.log(paymentIntent);
-      // const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
-      //   order.stripeCheckoutSessionId,
-      //   { expand: ['line_items'] }
-      // );
-      // console.log(sessionWithLineItems);
-
-      // const lItems = stripe.checkout.sessions.listLineItems(
-      //   event.data.object.id,
-      //   { limit: 5 }
-      //   // function (err, lineItems) {
-      //   //   // asynchronously called
-      //   // }
-      // );
-      // console.log(lItems);
-
-      // lineItems.forEach((item) => {
-      //   console.log(item);
-      // });
 
       break;
     }
