@@ -71,6 +71,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "pg": "^8.11.3",
+    "pg-to-ts": "^4.1.1",
     "stripe": "^14.3.0",
     "zod": "^3.22.2"
   },
